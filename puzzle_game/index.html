@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu 3D Optimisé</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <div id="info">
+            <h1>Optimisation des Performances 3D <span class="fps-display">FPS: <span id="fpsCounter">0</span></span></h1>
+            <p>Solutions implémentées pour améliorer les performances avec des modèles GLB</p>
+        </div>
+        <div id="stats"></div>
+        <div id="controls">
+            <h3>Paramètres d'optimisation</h3>
+            
+            <div class="slider-container">
+                <label>Qualité des modèles <span class="optimization-tag">LOD</span></label>
+                <input type="range" id="quality" min="1" max="3" value="2" step="1">
+            </div>
+            
+            <div class="slider-container">
+                <label>Distance de rendu <span class="optimization-tag">Frustum Culling</span></label>
+                <input type="range" id="renderDistance" min="50" max="500" value="200">
+            </div>
+            
+            <div class="slider-container">
+                <label>Densité des arbres <span class="optimization-tag">Instancing</span></label>
+                <input type="range" id="treeDensity" min="10" max="200" value="50">
+            </div>
+            
+            <div class="slider-container">
+                <label>Densité des rochers <span class="optimization-tag">Instancing</span></label>
+                <input type="range" id="rockDensity" min="5" max="100" value="25">
+            </div>
+            
+            <div>
+                <button id="toggleShadows">Désactiver les ombres</button>
+                <button id="toggleTextures">Désactiver les textures</button>
+                <button id="resetBtn">Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import map pour three.js et modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+            }
+        }
+    </script>
+    
+    <!-- Import des modules JavaScript -->
+    <script type="module" src="./src/main.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/GLTFLoader.js"></script>
+
+</body>
+</html>
