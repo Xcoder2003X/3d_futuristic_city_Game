@@ -239,12 +239,37 @@ export class CharacterController {
         // Position temporaire pour vérification
         const newPosition = this.character.position.clone();
         
-        // Raycast pour trouver la hauteur du terrain
-        const rayStart = new THREE.Vector3(newPosition.x, newPosition.y +3, newPosition.z);
-        this.raycaster.set(rayStart, this.downVector);
+        // Ground detection raycast
+        const groundRayStart = new THREE.Vector3(newPosition.x, newPosition.y + 0.5, newPosition.z);
+        this.raycaster.set(groundRayStart, this.downVector);
         
-        // Debug raycast
-        console.log("Raycast start:", rayStart.y, "Current position:", this.character.position.y);
+        // Forward collision detection
+        const forwardDirection = new THREE.Vector3();
+        if (this.keys.forward) forwardDirection.z = -1;
+        if (this.keys.backward) forwardDirection.z = 1;
+        forwardDirection.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.currentRotation);
+        
+        const collisionRayStart = this.character.position.clone();
+        collisionRayStart.y += .4; // Check at character's middle height
+        this.raycaster.set(collisionRayStart, forwardDirection);
+        
+        // Check for collisions first
+        const collisions = this.raycaster.intersectObjects(this.scene.children.filter(obj => 
+            obj !== this.character && 
+            !this.character.getObjectById(obj.id) &&
+            obj.type !== "Light" &&
+            obj.type !== "Camera"
+        ), true);
+        
+        // If there's a collision within 1 unit, prevent movement
+        const collision = collisions.find(c => c.distance < 1 && c.object.isMesh);
+        if (collision) {
+            console.log("Collision detected!");
+            shouldMove = false;
+        }
+        
+        // Ground detection
+        this.raycaster.set(groundRayStart, this.downVector);
 
         // Filter out the character and its children from raycast
         const sceneObjects = this.scene.children.filter(obj => {
@@ -267,16 +292,14 @@ export class CharacterController {
 
             if (groundIntersect) {
                 // Set character height to be slightly above ground
-                const targetY = groundIntersect.point.y ; // Reduced offset
+                const targetY = groundIntersect.point.y ; // Keep slightly above ground
                 
                 // Smooth transition to new height
                 newPosition.y = THREE.MathUtils.lerp(
                     this.character.position.y,
                     targetY,
                     0.1 // Adjust this value to change how quickly height changes
-                );
-                
-                console.log("Ground found at:", groundIntersect.point.y, "Setting height to:", newPosition.y);
+                );                console.log("Ground found at:", groundIntersect.point.y, "Setting height to:", newPosition.y);
             }
         } else {
             console.log("No ground found!");
@@ -290,15 +313,21 @@ export class CharacterController {
         if (shouldMove) {
             // Normalize movement vector
             moveVector.normalize();
-            
+
             // Apply character's rotation to movement vector
             moveVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), this.currentRotation);
-            
+
+            // Adjust speed if running
+            let speed = this.moveSpeed;
+            if (this.isRunning) {
+                speed = this.moveSpeed * 2; // Augmente la vitesse de course (ajuste le facteur si besoin)
+            }
+
             // Apply movement
             this.character.position.add(
-                moveVector.multiplyScalar(this.moveSpeed * deltaTime)
+                moveVector.multiplyScalar(speed * deltaTime)
             );
-            
+
             this.isMoving = true;
         } else {
             this.isMoving = false;

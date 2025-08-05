@@ -73,12 +73,12 @@ function init() {
     controls.dampingFactor = 0.05;
     //Le point cible (controls.target) est le pivot autour duquel la caméra orbite.
     controls.target.set(244, 1, -305); // Match player's initial position
-    controls.maxPolarAngle = Math.PI / 2; // Prevent camera from going below ground
+    controls.maxPolarAngle = Math.PI * 0.68; // Permet de voir le ciel sans passer sous le sol
     controls.minDistance = 2; // Minimum zoom distance
     controls.maxDistance = 10; // Maximum zoom distance
     
     // Configuration de l'éclairage directionnel (soleil)
-    const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+    const sun = new THREE.DirectionalLight(0xffffff, 1);
     sun.position.set(1, 2, 3);
     sun.castShadow = true;
 
@@ -417,7 +417,7 @@ fetchQuizPoints(1)
 
  function createLight(position) {
     // Main point light
-    const light = new THREE.PointLight(0x0000aa, 1, 20);
+    const light = new THREE.PointLight(0xFFC0CB, 1, 10);
     light.position.set(position.x, position.y, position.z);
     scene.add(light);
 
@@ -429,7 +429,7 @@ fetchQuizPoints(1)
     for (let i = 1; i <= 3; i++) {
         const glowGeometry = new THREE.SphereGeometry(0.5 + i * 0.8, 8, 8);
         const glowMaterial = new THREE.MeshBasicMaterial({
-            color: 0x0000aa,
+            color: 0xFFC0CB,
             transparent: true,
             opacity: 0.3 / i,
             side: THREE.BackSide,
@@ -445,9 +445,9 @@ fetchQuizPoints(1)
         const angle = (i / rayCount) * Math.PI * 2;
         
         // Create ray geometry
-        const rayGeometry = new THREE.PlaneGeometry(4, 40);
+        const rayGeometry = new THREE.PlaneGeometry(2, 20);
         const rayMaterial = new THREE.MeshBasicMaterial({
-            color: 0x2222ff,
+            color: 0xFFC0CB,
             transparent: true,
             opacity: 0.4,
             side: THREE.DoubleSide,
@@ -524,7 +524,7 @@ function checkQuizPointProximity() {
     for (const point of quizPoints) {
         const pointPos = new THREE.Vector3(
             point.positionX,
-            point.positionY +17,
+            point.positionY ,
             point.positionZ
         );
         

@@ -98,7 +98,7 @@ export class RewardsUI {
     
     async loadSkins() {
         try {
-            const response = await fetch(`/api/skins/player/${this.playerId}`);
+            const response = await fetch(`http://localhost:8080/api/skins/player/${this.playerId}`);
             this.skins = await response.json();
         } catch (error) {
             console.error('Error loading skins:', error);
@@ -107,7 +107,7 @@ export class RewardsUI {
     
     async loadBadges() {
         try {
-            const response = await fetch(`/api/badges/player/${this.playerId}`);
+            const response = await fetch(`http://localhost:8080/api/badges/player/${this.playerId}`);
             this.badges = await response.json();
         } catch (error) {
             console.error('Error loading badges:', error);
@@ -231,7 +231,7 @@ export class RewardsUI {
         try {
 
             // 1. Fait une requête au backend pour équiper le skin
-            await fetch(`/api/skins/equip?playerId=${this.playerId}&skinId=${skinId}`, {
+            await fetch(`http://localhost:8080/api/skins/equip?playerId=${this.playerId}&skinId=${skinId}`, {
                 method: 'POST'
             });
             
